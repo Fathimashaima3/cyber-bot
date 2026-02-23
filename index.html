@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Security AI Chat</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .message { padding: 10px 15px; border-radius: 10px; max-width: 80%; line-height: 1.4; }
+        .user { align-self: flex-end; background: #3b82f6; }
+        .bot { align-self: flex-start; background: #334155; border: 1px solid #475569; }
+        #input-area { padding: 20px; background: #1e293b; display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 5px; border: none; background: #0f172a; color: white; }
+        button { padding: 10px 20px; background: #3b82f6; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        #debug-panel { height: 100px; background: #000; color: #10b981; font-family: monospace; padding: 10px; font-size: 12px; overflow-y: scroll; border-top: 2px solid #334155; }
+        .error-msg { color: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div class="message bot">Hello! I am your Cyber Security Assistant. Ask me anything about the documents I've indexed.</div>
+    </div>
+
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="Type your security question..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div id="debug-panel">DEBUG CONSOLE: System Ready...</div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const debugPanel = document.getElementById('debug-panel');
+
+        function log(msg, isError = false) {
+            const time = new Date().toLocaleTimeString();
+            debugPanel.innerHTML += `<div class="${isError ? 'error-msg' : ''}">[${time}] ${msg}</div>`;
+            debugPanel.scrollTop = debugPanel.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message to UI
+            appendMessage('user', message);
+            input.value = '';
+            log(`Sending request to API: "${message}"`);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.error) {
+                        // This handles the 401/Invalid Key error you saw earlier
+                        log(`SERVER ERROR: ${data.error}`, true);
+                        appendMessage('bot', `⚠️ Error: ${data.error}`);
+                    } else {
+                        log(`Success! Response received.`);
+                        appendMessage('bot', data.answer);
+                    }
+                } else {
+                    log(`HTTP ERROR ${response.status}: ${data.detail || 'Unknown error'}`, true);
+                }
+            } catch (err) {
+                log(`CONNECTION FAILED: Is the FastAPI server running?`, true);
+                appendMessage('bot', "Could not connect to the server.");
+            }
+        }
+
+        function appendMessage(role, text) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.innerText = text;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
