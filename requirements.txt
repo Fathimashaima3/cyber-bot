@@ -7,5 +7,5 @@ langchain-groq
 langchain-pinecone
 langchain-huggingface
 sentence-transformers
-pinecone[assistant]
+pinecone-client
 pydantic
