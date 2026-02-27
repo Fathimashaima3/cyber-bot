@@ -1,25 +1,21 @@
-# Core web framework
+# Core
 fastapi==0.111.1
 uvicorn[standard]==0.23.2
-
-# Environment variables
 python-dotenv==1.0.0
 pydantic==2.6.1
 
-# LangChain main
+# LangChain
 langchain==0.1.20
-
-# LangChain extensions (specific)
 langchain-huggingface==0.0.3
 langchain-groq==0.1.3
 langchain-pinecone==0.1.3
 langchain-openai==0.1.0
 
-# Embeddings & sentence models
+# Embeddings
 sentence-transformers>=2.6.0
 
-# Vector database
+# Pinecone
 pinecone-client==2.2.0
 
-# Optional dependencies (if needed)
+# Optional
 requests==2.31.0
