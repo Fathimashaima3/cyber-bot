@@ -11,6 +11,5 @@ numpy==1.27.0
 PyYAML==6.0
 requests==2.32.0
 SQLAlchemy==2.0.21
-tenacity==9.2.0
 sentence-transformers==2.2.2
 pypdf==3.12.2
