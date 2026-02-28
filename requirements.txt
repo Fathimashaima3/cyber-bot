@@ -5,5 +5,5 @@ python-dotenv==1.0.0
 langchain==0.1.20
 langchain-huggingface==0.0.3
 langchain-pinecone==0.1.0
-pinecone-client==3.3.2
+pinecone-client>=3.2.2,<4.0.0
 sentence-transformers>=2.6.0,<3.0.0
